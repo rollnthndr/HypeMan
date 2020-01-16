@@ -3,6 +3,8 @@ import cv2
 import sys
 import matplotlib.pyplot as plt
 
+IMG_FOLDER = 'images'
+
 def adjust_gamma(image, gamma=1.0):
 
    invGamma = 1.0 / gamma
@@ -14,7 +16,7 @@ def adjust_gamma(image, gamma=1.0):
 gamma = 0.8                                   # change the value here to get different result
 
 try:
-    img = cv2.imread('board.png',cv2.IMREAD_COLOR)
+    img = cv2.imread(f'{IMG_FOLDER}/board.png',cv2.IMREAD_COLOR)
 except:
     print('exception thrown while opening image')                 
 
@@ -52,7 +54,7 @@ dst = cv2.warpPerspective(img,M,(1920,1080))
 #plt.axis('off')
 #plt.subplot(122),plt.imshow(dst),plt.title('Output')
 
-bg = cv2.imread('boardroom 01.jpg')
+bg = cv2.imread(f'{IMG_FOLDER}/boardroom 01.jpg')
 bg_rgb = cv2.cvtColor(bg, cv2.COLOR_BGR2RGB)
 #
 #out = bg_rgb + dst
@@ -82,14 +84,14 @@ combined = cv2.add(dst_out,bg_out)
 #cv2.imwrite('mask.png', mask)
 #cv2.imwrite('combined.png',combined)
 
-fg = cv2.imread('fg_mask_rob.png',0)
+fg = cv2.imread(f'{IMG_FOLDER}/fg_mask_rob.png',0)
 ret, fgmask = cv2.threshold(fg, 1, 255, cv2.THRESH_BINARY)
 fgmask_inv = cv2.bitwise_not(fgmask)
 combined = cv2.bitwise_and(combined,combined,mask=fgmask_inv)
 fgimg = cv2.bitwise_and(bg,bg,mask=fgmask)
 final = cv2.add(combined,fgimg)
 
-cv2.imwrite('final.jpg',final)
+cv2.imwrite(f'{IMG_FOLDER}/final.jpg',final)
 
 
 

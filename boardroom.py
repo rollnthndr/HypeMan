@@ -9,12 +9,17 @@ from matplotlib.font_manager import FontProperties
 import numpy as np
 import statistics
 
+DATA_FOLDER = 'data'
+IMG_FOLDER = 'images'
+GOOGLE_LSO_FILE = 'LSO_Grades'
+GOOGLE_CREDS_FILE = 'lso-grade-sheet-265019-66cf26ebfe79.json'
+MAX_COLUMNS = 17
+MAX_ROWS = 15
 
 from oauth2client.service_account import ServiceAccountCredentials
 #from datetime import datetime
 
 def updateDatabase(path):
-    
     if time.time() - getModificationTimeSeconds(path) > 3600:
         print('Updating from Google.')
         updateFromGoogle()
@@ -24,12 +29,12 @@ def updateDatabase(path):
 def updateFromGoogle():
     try:
         scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-        creds = ServiceAccountCredentials.from_json_keyfile_name('HypeManLSO-358d4493fc1d.json', scope)
+        creds = ServiceAccountCredentials.from_json_keyfile_name(GOOGLE_LSO_CREDS_FILE, scope)
         client = gspread.authorize(creds)
-        sheet = client.open('HypeMan_LSO_Grades').sheet1
+        sheet = client.open(GOOGLE_LSO_FILE).sheet1
         list_of_hashes = sheet.get_all_records()    
 
-        with open('data.txt', 'w') as outfile:            
+        with open(f'{DATA_FOLDER}/data.txt', 'w') as outfile:            
             json.dump(list_of_hashes, outfile)        
     except:
         print('Exception thrown in updateFromGoogle')
@@ -95,7 +100,7 @@ def calculateGrade(curList, grade0):
         
 def calculatePilotRow(data, name, grade0):    
         
-    boardRow = [];
+    boardRow = []
     
     uniqueDates = []
     for i in reversed(data):
@@ -106,7 +111,7 @@ def calculatePilotRow(data, name, grade0):
     
     for i in uniqueDates:
         #print(i)
-        curList = [];
+        curList = []
         for j in data:
             if name == j['pilot'] and j['ServerDate'] == i:
                 curList.append(j)
@@ -131,10 +136,10 @@ def calculatePilotRow(data, name, grade0):
     #print(boardRow)           
     return boardRow
 
-lsoData = 'data.txt'
+lsoData = f'{DATA_FOLDER}/data.txt'
 updateDatabase(lsoData)
 
-with open('data.txt') as json_file:
+with open(f'{DATA_FOLDER}/data.txt') as json_file:
     data = json.load(json_file)
  
 grade0={}; grade0['color']='white'; grade0['score']=0.0; grade0['symbol']='x'; grade0['grade']='--'
@@ -155,10 +160,10 @@ for i in reversed(data):
         pilotDict[name]=pilotRow
         
 
-maxLength = 0
-for i in pilotRows:
-    if len(i) > maxLength:
-        maxLength = len(i)
+# maxLength = 0
+# for i in pilotRows:
+#     if len(i) > maxLength:
+#         maxLength = len(i)
     
     
 fig = plt.figure(dpi=150)
@@ -171,10 +176,9 @@ tb = Table(ax, bbox=[0, 0, 1, 1])
 
 tb.auto_set_font_size(False)
 
-
-n_cols = maxLength+2
-n_rows = len(pilots)+1
-width, height = 100 / n_cols, 100.0 / n_rows
+# n_cols = maxLength+2
+# n_rows = len(pilots)+1
+width, height = 100 / MAX_COLUMNS, 100.0 / MAX_ROWS
 anchor='⚓'
 #unicorn='✈️'
 blankcell='#1A392A'
@@ -196,9 +200,10 @@ cell.set_edgecolor(edgecolor)
 cell.set_text_props(fontproperties=FontProperties(weight='bold',size=8))
 cell.set_edgecolor(edgecolor)
 #cell.set_fontsize(24)
-titlestr = ' JOINT OPS WING'
+titlestr = ' 416 Lynx Wing'
 count = 0
-for col_idx in range(2,maxLength+2):
+# for col_idx in range(2,maxLength+2):
+for col_idx in range(2,MAX_COLUMNS):
     
     text = ''
     
@@ -224,9 +229,9 @@ for p_idx in range(0,len(pilots)):
     row_idx = p_idx+1
     cell = tb.add_cell(row_idx,0,3*width,height,text=pilots[p_idx],loc='center',facecolor=blankcell,edgecolor='blue') #edgecolor='none'    
     cell.get_text().set_color(textcolor)
-    cell.set_text_props(fontproperties=FontProperties(weight='bold',size="7.5"))
+    cell.set_text_props(fontproperties=FontProperties(weight='bold',size="6"))
     cell.set_edgecolor(edgecolor)
-    name = pilots[p_idx];
+    name = pilots[p_idx]
     rd = pilotDict[name]
     avg = statistics.mean(rd)
     cell = tb.add_cell(row_idx,1,width,height,text=round(avg,1),loc='center',facecolor=blankcell)
@@ -244,6 +249,7 @@ for p_idx in range(0,len(pilots)):
         elif g >=1 and g < 2:
             color=colors[2]
         elif g >=2 and g < 3:
+            text = 'O'
             color = colors[3]
         elif g >=3:
             color = colors[4]
@@ -265,10 +271,26 @@ for p_idx in range(0,len(pilots)):
     text=''
     
     # add the remaining cells to the end
-    for f in range(col_idx,maxLength+2):
+    for f in range(col_idx,MAX_COLUMNS):
         cell = tb.add_cell(row_idx,f,width,height,text=text,loc='center',facecolor=color) #edgecolor='none'            
         cell.set_edgecolor(edgecolor)
+
+
+# pad the grid with blank rows
+# number_of_rows = tb.
+needed_rows = MAX_ROWS - len(pilots)
+for idx in range(len(pilots) + 1, needed_rows + 2):
+    cell = tb.add_cell(idx,0,3*width,height,text=' ',loc='center',facecolor=blankcell)
+    cell.get_text().set_color(textcolor)
+    cell.set_text_props(fontproperties=FontProperties(weight='bold',size="7.5"))
+    cell.set_edgecolor(edgecolor)
+    for cnt in range(1,MAX_COLUMNS):
+            cell = tb.add_cell(idx,cnt,width,height,text='',loc='center',facecolor=blankcell)
+            cell.get_text().set_color(textcolor)
+            cell.set_text_props(fontproperties=FontProperties(weight='bold',size="7.5"))
+            cell.set_edgecolor(edgecolor)
         
+
 #tb.set_fontsize(7)    
 ax.add_table(tb)
 ax.set_axis_off()
@@ -278,4 +300,4 @@ ax.get_xaxis().set_ticks([])
 ax.get_yaxis().set_ticks([])
 #plt.title(titlestr,color='w')
 
-plt.savefig('board.png',transparent=False,bbox_inches='tight', pad_inches=0)
+plt.savefig(f'{IMG_FOLDER}/board.png',transparent=False,bbox_inches='tight', pad_inches=0)

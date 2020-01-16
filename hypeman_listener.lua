@@ -3,6 +3,10 @@ local string = require('string') -- load standard string library included with l
 JSON = (loadfile "JSON.lua")() -- one-time load of JSON
 
 dofile('private_api_keys.lua')
+
+DATA_FOLDER = 'data'
+IMG_FOLDER = 'images'
+
 -------------------------------------------------------------------------------
 -- private_api_keys.lua you must create, it looks like the following:
 -- HypeMan BotID and Channel
@@ -30,7 +34,7 @@ local privmsgid = PRIVATE_COMMAND_ID
 
 local announce_hypeman_start = false
 local PORT =  10081
-local HOST = '0.0.0.0'
+local HOST = '127.0.0.1'
 
 local dgram = require('dgram')
 local discordia = require('discordia')
@@ -74,6 +78,13 @@ end)
 --    return false
 --end
 
+function readAll(file)
+    local f = assert(io.open(file, "rb"))
+    local content = f:read("*all")
+    f:close()
+    return content
+end
+
 client:on('messageCreate', function(message)	
 	
 --	if message.content == '!connect' and message.author.id == privmsgid and message.channel.guild == nil then	
@@ -100,6 +111,21 @@ client:on('messageCreate', function(message)
 --			message.channel:send('HypeMan is an experimental Discord bot to announce Digital Combat Simulator (DCS) game events to Discord.  See https://aggressors.ca/hypeman for more information')		
 --		end
 --	end	
+	if message.content == '!server_info' then
+		local final_string = 'server_info.bat'
+		os.execute(final_string)
+		local str = readAll(DATA_FOLDER .. "/server_info.txt")
+		message.channel:send(str)
+		return
+	end
+
+	if message.content == '#boatstuff' then
+		local final_string = 'boardroom.bat'
+		os.execute(final_string)		
+		message.channel:send {
+			file = IMG_FOLDER .. "/final.jpg",
+		}
+	end
 end)
 
 client:run(BOT_CLIENT_ID)
@@ -399,7 +425,7 @@ local function savetable ( tbl, myfilename)
 end
 
 local function savetxt ( t )
-   local file = assert(io.open("lso_table.json", "w"))
+   local file = assert(io.open(DATA_FOLDER .. "lso_table.json", "w"))
    file:write(t)
    file:close()
 end
@@ -443,7 +469,7 @@ local function f(msg)
 				os.execute(execString2)
 				
 				cqch:send {
-					file = "trapsheet.png",
+					file = IMG_FOLDER .. "trapsheet.png",
 				}				
 			end
 

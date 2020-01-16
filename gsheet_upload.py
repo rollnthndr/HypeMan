@@ -4,6 +4,9 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
+GOOGLE_LSO_FILE = 'LSO_Grades'
+GOOGLE_CREDS_FILE = 'lso-grade-sheet-265019-66cf26ebfe79.json'
+
 #print('Length of sys.argv:')
 #print(len(sys.argv))
 if len(sys.argv) == 2:
@@ -21,10 +24,10 @@ if len(sys.argv) == 2:
 #	print(list(result))
 	
 	scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-	creds = ServiceAccountCredentials.from_json_keyfile_name('HypeManLSO-358d4493fc1d.json', scope)
+	creds = ServiceAccountCredentials.from_json_keyfile_name(GOOGLE_CREDS_FILE, scope)
 	client = gspread.authorize(creds)
 
-	sheet = client.open('HypeMan_LSO_Grades').sheet1
+	sheet = client.open(GOOGLE_LSO_FILE).sheet1
 	#list_of_hashes = sheet.get_all_records()
 
 

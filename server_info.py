@@ -1,5 +1,11 @@
 import socket, select, string, sys, time
 
+SERVERS = [
+		    ['JOW East', 'jow2.aggressors.ca'],
+		   	['JOW West', 'jow.aggressors.ca'],
+		   	['Local', '127.0.0.1']
+		]
+
 retry = 1
 delay = 1
 timeout = 1
@@ -52,7 +58,6 @@ def doHost(servername, hostname):
 	print(servername + ", hostname: " + hostname + ", ip: " + serverIP + ", DCS: " + dcsStatus + ", SRS: " + srsStatus + ", LotATC: " + LotATCStatus)
 	
 if __name__ == "__main__":	
-	doHost('JOW East','jow2.aggressors.ca')
-	doHost('JOW West','jow.aggressors.ca')
-
+	for server_name, server_address in SERVERS:
+		doHost(server_name, server_address)
 	

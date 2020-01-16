@@ -22,4 +22,4 @@ client:on("messageCreate", function(message)
 end)
 
 
-client:run("Bot BOT_TOKEN") -- replace BOT_TOKEN with your bot token
+client:run("Bot NjYyNjk0Mzk2NDc0Njg3NDk5.Xhy00w.uIjcRSbFvWYsKXfxtL5qpWW0piE") -- replace BOT_TOKEN with your bot token

@@ -7,6 +7,9 @@ from datetime import datetime
 import random
 from time import sleep
 
+GOOGLE_FLIGHTSTATS_FILE = 'FlightStats'
+GOOGLE_CREDS_FILE = 'lso-grade-sheet-265019-66cf26ebfe79.json'
+
 # add a random delay to every upload entry.  The goal here is to prevent too many requests from happening at once
 # and to prevent the case of two requests happening at exactly the same time, such as during a formation landing
 # luvit/lua seem to be able to handle the rapid fire of UDP data coming from DCS, but the google sheets API
@@ -25,10 +28,10 @@ if len(sys.argv) == 2:
 	# print(list(result))
 	
 	scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-	creds = ServiceAccountCredentials.from_json_keyfile_name('JOWFlightTrack-ceda2c0174a7.json', scope)
+	creds = ServiceAccountCredentials.from_json_keyfile_name(GOOGLE_CREDS_FILE, scope)
 	client = gspread.authorize(creds)
 
-	sheet = client.open('JowFlightStats').sheet1
+	sheet = client.open(GOOGLE_FLIGHTSTATS_FILE).sheet1
 	#list_of_hashes = sheet.get_all_records()
 
 

@@ -10,6 +10,8 @@ import matplotlib.patches as patches
 import cv2
 import datetime
 
+IMG_FOLDER = 'images'
+TRAPSHEET_FOLDER = 'C:/Users/nascar/Saved Games/DCS.openbeta_server'
 #%%
 def ReadTrapsheet(filename):
     # read a trap sheet into a dictionary as numpy arrays
@@ -41,7 +43,7 @@ def ReadTrapsheet(filename):
 def getRecentTrapsheet(sheetpath):
     try:
         p = Path(str(sheetpath))
-        list_of_paths = p.glob('*Trapsheet*.csv'); 
+        list_of_paths = p.glob('*Trapsheet*.csv')
         return max(list_of_paths, key=lambda p: p.stat().st_mtime) 
     except:
         return ''
@@ -72,12 +74,12 @@ def plotTrapsheet(ts, pinfo):
     feet = -6076.12
    # feet = -1
     
-    theta = -9*np.pi/180.;
+    theta = -9*np.pi/180
     
     rotMatrix = np.array([[np.cos(theta), -np.sin(theta)], 
                          [np.sin(theta),  np.cos(theta)]])
     
-    xy = np.array([ts['X']+dx, ts['Z']+dy])/1852.;
+    xy = np.array([ts['X']+dx, ts['Z']+dy])/1852
     xy = np.dot(rotMatrix,xy)
     
     
@@ -136,7 +138,7 @@ def plotTrapsheet(ts, pinfo):
     
    # xgs = np.linspace(0,xy[-1],2)
     xgs = xy[0]
-    zt = 6076.12*xgs*np.tan(3.5*np.pi/180.0);
+    zt = 6076.12*xgs*np.tan(3.5*np.pi/180.0)
     gx = 0
     gz = 40
     ax.plot(xy[0],ts['Alt'], 'g', linewidth=16, alpha=0.0)
@@ -179,11 +181,11 @@ def plotTrapsheet(ts, pinfo):
 #                        boxcoords=("axes fraction", "data"),
 #                        box_alignment=(0., 0.5),
 #                        arrowprops=dict(arrowstyle="->"))
-    carrier01 = plt.imread('boat03.png')  
+    carrier01 = plt.imread(f'{IMG_FOLDER}/boat03.png')  
    # ax.add_artist(ab)
     ax.figure.figimage(carrier01, 1000, 350, alpha=.45, zorder=1)
     
-    carrier02 = plt.imread('boat05.png')  
+    carrier02 = plt.imread(f'{IMG_FOLDER}/boat05.png')  
     ax.figure.figimage(carrier02, 1000, 567, alpha=.45, zorder=1)
     
     plt.setp(ax.get_xticklabels(), color=labelcolor)
@@ -304,7 +306,7 @@ def plotTrapsheet(ts, pinfo):
     
     titlestr = ''
     callsign = pinfo['callsign']
-    titlestr = callsign;
+    titlestr = callsign
     titlestr+=' '
     titlestr+=ts['Grade']
     titlestr+=' '
@@ -320,7 +322,7 @@ def plotTrapsheet(ts, pinfo):
     
     fig.suptitle(titlestr, fontsize=14,color=labelcolor)
     #fig.title(ts['Details'], fontsize=10)
-    fig.savefig('trapsheet.png', facecolor=facecolor)    
+    fig.savefig(f'{IMG_FOLDER}/trapsheet.png', facecolor=facecolor)    
     
 
 #    img = cv2.imread('test2png.png')
@@ -371,17 +373,18 @@ def getCallsign(input):
     print('Getting callsign from: ', input)
     
 #%%
-trapfolder = 'C:/python_code/bm/trapsheets'
-trapfolder = 'C:/FlightSimDocs/JOW/stats/SLModStats/LSO'
-trapfolder = 'C:/HypeMan/trapsheets'
-trapfolder = 'C:/Users/DCSAdmin/Saved Games/DCS.openbeta_server'
+# trapfolder = 'C:/python_code/bm/trapsheets'
+# trapfolder = 'C:/FlightSimDocs/JOW/stats/SLModStats/LSO'
+# trapfolder = 'C:/HypeMan/trapsheets'
+# trapfolder = 'C:/Users/DCSAdmin/Saved Games/DCS.openbeta_server'
+
 #trapfolder = 'C:/temp'
-p = Path(str(trapfolder))
+p = Path(str(TRAPSHEET_FOLDER))
 
 
 #print('Latest path: ', latest_path)
 
-trapfile = getRecentTrapsheet(trapfolder)
+trapfile = getRecentTrapsheet(TRAPSHEET_FOLDER)
 
 print('Final file is:', trapfile)
 
