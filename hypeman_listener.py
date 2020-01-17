@@ -14,53 +14,25 @@ logger = logging.getLogger(APP_CONFIG["app"]["logging_level"])
 class BaseBot(discord.Client):
     pass
 
-class HypeManBot(BaseBot):
+
+class AirbossHypemanBot(BaseBot):
     def __init__(self):
         super().__init__()
         self.channel = None
 
     async def on_ready(self):
         logger.info(f"{self.user.name} is logged onto Discord and mission ready.")
-        self.channel = self.get_channel(int(DISCORD_CONFIG["hypeman"]["channel_id"]))
+        self.channel = self.get_channel(int(DISCORD_CONFIG["airboss_hypeman"]["channel_id"]))
 
     async def on_message(self, message):
-        if message.content.startswith("!server_info"):
-            logger.debug("HypeMan received !server_info message.")
+        logger.debug(f'{message.content}')
+        if message.content.startswith("!boatstuff"):
+            logger.debug("Airboss Hypeman received #boatstuff message.")
             if logger.level == logging.DEBUG:
-                await self.channel.send(f'```Hello from HypeMan```')
+                await self.channel.send(f'```Hello from Airboss HypeMan```')
 
     async def on_error(self, event, *args, **kwargs):
-        logger.debug(f'{event}')
-
-
-class AirbossBot(BaseBot):
-    def __init__(self):
-        super().__init__()
-        self.channel = None
-
-    async def on_ready(self):
-        logger.info(f"{self.user.name} is logged onto Discord and mission ready.")
-        self.channel = self.get_channel(int(DISCORD_CONFIG["airboss"]["channel_id"]))
-
-    async def on_message(self, message):
-        if message.content.startswith("#boatstuff"):
-            logger.debug("Airboss received #boatstuff message.")
-            if logger.level == logging.DEBUG:
-                await self.channel.send(f'```Hello from Airboss```')
-
-    async def on_error(self, event, *args, **kwargs):
-        logger.debug(f'{event}')
-
-
-class UdpServer(asyncio.DatagramProtocol):
-    def __init__(self):
-        super().__init__()
-
-    def connection_made(self, transport):
-        self.transport = transport
-
-    def datagram_received(self, data, addr):
-        logger.debug(f'Received UDP msg - {data}')
+        logger.debug(f'Error - {event}')
 
 
 class HypeManListener:
@@ -72,13 +44,9 @@ class HypeManListener:
         
         self._announce = bool(APP_CONFIG["app"]["announce_bot_start"])
         
-        self._bot_hypeman_client_id = DISCORD_CONFIG["hypeman"]["client_id"]
-        self._bot_airboss_client_id = DISCORD_CONFIG["airboss"]["client_id"]
+        self._airboss_client_id = DISCORD_CONFIG["airboss_hypeman"]["client_id"]
         
-        self._bot_hypeman = HypeManBot()
-        self._bot_airboss = AirbossBot()
-
-        self._udp_server = UdpServer()
+        self._airboss = AirbossHypemanBot()
 
         self._start_listener()
 
@@ -90,11 +58,7 @@ class HypeManListener:
         loop = asyncio.get_event_loop()
 
         # create bot tasks
-        loop.create_task(self._bot_hypeman.start(self._bot_hypeman_client_id))
-        loop.create_task(self._bot_airboss.start(self._bot_airboss_client_id))
-
-        # create udp server task
-        loop.create_datagram_endpoint(UdpServer,local_addr=(f'{self._host}',int(self._port)))
+        loop.create_task(self._airboss.start(self._airboss_client_id))
 
         try:
             # run all tasks
