@@ -24,3 +24,5 @@ logs/trapsheet.log
 gateway.json
 discordia.log
 logs/hypeman.log
+hypeman_listener.py
+hypeman.win.code-workspace
