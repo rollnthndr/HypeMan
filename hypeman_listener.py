@@ -7,15 +7,14 @@ import asyncio
 
 # set up the global logger at logging level set in app_settings.ini
 logging.config.fileConfig(
-    pathlib.Path(APP_CONFIG["app"]["logging_config"]),
-    disable_existing_loggers=True,
+    pathlib.Path(APP_CONFIG["app"]["logging_config"]), disable_existing_loggers=True,
 )
 logger = logging.getLogger(APP_CONFIG["app"]["logging_level"])
 
 
 class BaseBot(discord.Client):
     async def on_ready(self):
-        logger.info(f"{self.user.name} is logged in and ready.")
+        logger.info(f"{self.user.name} is logged onto Discord and mission ready.")
 
 
 class HypeManBot(BaseBot):
