@@ -8,6 +8,8 @@ luvit.exe
 __pycache__/
 venv-lin/
 deps/
+.vscode/
+discord_api_keys.ini
 private_api_keys.lua
 _config_settings.txt
 lso-grade-sheet-265019-66cf26ebfe79.json
