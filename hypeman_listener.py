@@ -27,8 +27,6 @@ class AirbossHypemanBot(discord.Client):
 
     # Called when the bot has connected to discord and is ready.
     async def on_ready(self):
-        logger.info(f"Bot logged onto Discord and mission ready.")
-
         # now that bot is connected to discord, get the channel it's connected to
         self.channel = self.get_channel(
             int(DISCORD_CONFIG["airboss_hypeman"]["channel_id"])
@@ -38,19 +36,22 @@ class AirbossHypemanBot(discord.Client):
         if str(self.announce).lower() == "true":
             await self.channel.send(f"`{self.announce_msg}`")
 
+         logger.info(f"Discord bot ready.")
+
     async def on_message(self, message):
         # if message on channel is from this bot, we don't want to do
         # anything so just return.
         if message.author.id == self.user.id:
             return
 
-        logger.debug(f"{message.content}")
+        logger.debug(f"Message from Discord - {message.content}")
 
         # check message if it contains a command
         if message.content.startswith("!boatstuff"):
-            logger.debug("Airboss Hypeman received #boatstuff message.")
+            # create and send greenie board to discord
+            logger.debug(f'Creating greenie board.')
             if logger.level == logging.DEBUG:
-                await self.channel.send(f"```Hello from Airboss HypeMan```")
+                await self.channel.send(f"```Creating greenie board.```")
 
     async def on_error(self, event, *args, **kwargs):
         logger.debug(f"Bot error - {event}\n{args}")
