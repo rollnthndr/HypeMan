@@ -1,6 +1,6 @@
 import logging
 from logging import config
-import pathlib
+from pathlib import Path
 from config.config import APP_CONFIG, DISCORD_CONFIG
 import discord
 import asyncio
@@ -8,7 +8,7 @@ import asyncio_dgram
 
 # set up the global logger at logging level set in app_settings.ini
 logging.config.fileConfig(
-    pathlib.Path(APP_CONFIG["app"]["logging_config"]), disable_existing_loggers=True,
+    Path(APP_CONFIG["app"]["logging_config"]), disable_existing_loggers=True,
 )
 if APP_CONFIG["app"]["debugging"].lower() == "true":
     logger = logging.getLogger("debug")
@@ -44,7 +44,7 @@ class AirbossHypemanBot(discord.Client):
         if message.author.id == self.user.id:
             return
 
-        logger.debug(f"Message from Discord - {message.content}")
+        logger.debug(f"Message from Discord - {msg}")
 
         # check message if it contains a command
         if message.content.startswith("!boatstuff"):
@@ -52,6 +52,9 @@ class AirbossHypemanBot(discord.Client):
             logger.debug(f'Creating greenie board.')
             if logger.level == logging.DEBUG:
                 await self.channel.send(f"```Creating greenie board.```")
+        else if message.content.startswith("!server_info"):
+            # call server_info.py and send resulting text to discord
+            pass
 
     async def on_error(self, event, *args, **kwargs):
         logger.debug(f"Bot error - {event}\n{args}")

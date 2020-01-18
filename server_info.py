@@ -1,16 +1,17 @@
+import os
 import socket
 import select
 import string
 import sys
 import time
-import pathlib
+from pathlib import Path
 from config.config import APP_CONFIG
 import logging
 from logging import config
 
 # set up the global logger at logging level set in app_settings.ini
 logging.config.fileConfig(
-    pathlib.Path(APP_CONFIG["app"]["logging_config"]), disable_existing_loggers=True,
+    Path(APP_CONFIG["app"]["logging_config"]), disable_existing_loggers=True,
 )
 if APP_CONFIG["app"]["debugging"].lower() == "true":
     logger = logging.getLogger("debug")
@@ -31,8 +32,10 @@ class ServerInfo:
 		self.__delay = 1
 		self.__timeout = 1
 		self.__servers = servers
+		self.__output_file = f"{APP_CONFIG['app']['data_folder']}\server_info.txt"
 
 		logger.debug("ServerInfo initialized.")
+		logger.debug(f'Server info output file - {self.__output_file}')
 
 	def __isOpen(self, ip, port) -> bool:
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -68,25 +71,30 @@ class ServerInfo:
 	def check_servers(self):
 		logger.info("Checking server info.")
 
-		for servername, hostaddress in self.__servers:
-			serverIP = self.__GetServerIP(hostaddress)
-			dcsStatus = "DOWN"
-			srsStatus = "DOWN"
-			LotATCStatus = "DOWN"	
-			if self.__checkHost(hostaddress, 10308):
-				dcsStatus = "UP"
-				
-			if self.__checkHost(hostaddress, 5002):
-				srsStatus = "UP"
-				
-			if self.__checkHost(hostaddress, 10310):
-				LotATCStatus = "UP"
-				
-			logger.debug(servername + ", hostname: " + hostaddress + ", ip: " + serverIP + ", DCS: " + dcsStatus + ", SRS: " + srsStatus + ", LotATC: " + LotATCStatus)
-		
-if __name__ == "__main__":
-	
+		dcsStatus = "DOWN"
+		srsStatus = "DOWN"
+		LotATCStatus = "DOWN"
 
+		with open(self.__output_file, 'w') as writer:
+			for servername, hostaddress in self.__servers:
+				serverIP = self.__GetServerIP(hostaddress)	
+				if self.__checkHost(hostaddress, 10308):
+					dcsStatus = "UP"
+					
+				if self.__checkHost(hostaddress, 5002):
+					srsStatus = "UP"
+					
+				if self.__checkHost(hostaddress, 10310):
+					LotATCStatus = "UP"
+				
+				results = f'{servername}, hostname: {hostaddress}, ip: {serverIP}, DCS: {dcsStatus}, SRS: {srsStatus}, LotATC: {LotATCStatus}'
+
+				logger.info(results)
+		
+				writer.write(f'{results}\n')
+
+
+if __name__ == "__main__":
 	server_info = ServerInfo(SERVERS)
 
 	server_info.check_servers()
