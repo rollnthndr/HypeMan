@@ -8,8 +8,6 @@ class APP:
     FOLDER_DATA = os.path.join(os.getcwd(), 'data')
     FOLDER_LOGS = os.path.join(os.getcwd(), 'logs')
     FILE_LOG = os.path.join(FOLDER_LOGS, 'hypeman.log')
-    BOT_ANNOUNCE = True
-    BOT_ANNOUNCE_MSG = 'HypeMan standing by to standby.'
 
 class GOOGLE:
     CREDS_FILE = 'lso-grade-sheet-265019-66cf26ebfe79.json'
