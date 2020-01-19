@@ -17,6 +17,7 @@ hypeman_listener.lua - this is the backend listener that receives the messages f
 - numpy
 - oauth2client
 - discord
+- PyNaCl
 - asyncio-dgram
 
 ### Lua #
