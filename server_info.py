@@ -16,13 +16,13 @@ log = logger(__name__, CFG.SERVERINFO.FILE_LOG, 'w', CFG.APP.DEBUG)
 
 
 class ServerInfo:
-	def __init__(self):
+	def __init__(self, servers, ports, output_file):
 		self.__retry = 1
 		self.__delay = 1
 		self.__timeout = 1
-		self.__servers = CFG.SERVERINFO.SERVERS
-		self.__ports = CFG.SERVERINFO.PORTS
-		self.__output_file = CFG.SERVERINFO.FILE_DATA
+		self.__servers = servers
+		self.__ports = ports
+		self.__output_file = output_file
 
 		log.debug("ServerInfo initialized.")
 		log.debug(f'Server info output file - {self.__output_file}')
@@ -102,10 +102,9 @@ class ServerInfo:
 
 
 if __name__ == "__main__":
-	server_info = ServerInfo()
+	server_info = ServerInfo(CFG.SERVERINFO.SERVERS,
+							CFG.SERVERINFO.PORTS,
+							CFG.SERVERINFO.FILE_DATA)
 
 	server_info.check_servers()
-
-	# for server_name, server_address in SERVERS:
-	# 	server_info.doHost(server_name, server_address)
 	

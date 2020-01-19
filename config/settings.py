@@ -1,7 +1,7 @@
 import os
 
 class APP:
-    DEBUG = False
+    DEBUG = True
     HOST = '127.0.0.1'
     PORT = 10081
     FOLDER_IMG = os.path.join(os.getcwd(), 'images')
