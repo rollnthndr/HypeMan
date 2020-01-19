@@ -1,3 +1,4 @@
+import subprocess
 import logging
 from logging import config
 from pathlib import Path
@@ -41,21 +42,23 @@ class AirbossHypemanBot(discord.Client):
         # check message if it contains a command
         if message.content.startswith("!boatstuff"):
             # create and send greenie board to discord
-            log.debug(f'Creating greenie board.')
+            log.info(f'Creating greenie board.')
             if log.level == logging.DEBUG:
                 await self.channel.send(f"```Creating greenie board.```")
 
         elif message.content.startswith("!server_info"):
             # call server_info.py and send resulting text to discord
-            log.debug('Getting server info.')
-            log.debug(f'Creating greenie board.')
+            log.info('Getting server info.')
             if log.level == logging.DEBUG:
                 await self.channel.send(f"```Getting server info.```")
+
+            subprocess.run(['python', 'server_info.py'])
         else:
             pass
 
     async def on_error(self, event, *args, **kwargs):
         log.debug(f"Bot error - {event}\n{args}")
+
 
 
 class HypeManListener:
@@ -85,8 +88,8 @@ if __name__ == "__main__":
     # Create the BOT and Listener classes
     hm_bot = AirbossHypemanBot(CFG_DISCORD.HYPEMAN.ID_CLIENT,
                                 CFG_DISCORD.HYPEMAN.ID_CHANNEL,
-                                CFG.APP.BOT_ANNOUNCE,
-                                CFG.APP.BOT_ANNOUNCE_MSG)
+                                CFG_DISCORD.HYPEMAN.BOT_ANNOUNCE,
+                                CFG_DISCORD.HYPEMAN.BOT_ANNOUNCE_MSG)
     hm_listener = HypeManListener(hm_bot)
 
     # get the event main loop to run the tasks asynchronously
