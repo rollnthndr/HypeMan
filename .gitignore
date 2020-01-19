@@ -5,6 +5,8 @@ luvi.exe
 luvit.exe
 
 *.lin.code-workspace
+*.log
+*.txt
 __pycache__/
 venv-lin/
 deps/
