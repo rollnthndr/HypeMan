@@ -1,42 +1,34 @@
 import logging
 from logging import config
 from pathlib import Path
-from config.config import APP_CONFIG, DISCORD_CONFIG
 import discord
 import asyncio
 import asyncio_dgram
+import config.settings as CFG
+import config.settings_discord as CFG_DISCORD
+from config.logger import logger
 
-# set up the global logger at logging level set in app_settings.ini
-logging.config.fileConfig(
-    Path(APP_CONFIG["app"]["logging_config"]), disable_existing_loggers=True,
-)
-if APP_CONFIG["app"]["debugging"].lower() == "true":
-    logger = logging.getLogger("debug")
-else:
-    logger = logging.getLogger("info")
-
+log = logger(__name__, CFG.APP.FILE_LOG,'w', CFG.APP.DEBUG)
 
 class AirbossHypemanBot(discord.Client):
     def __init__(self):
         super().__init__()
-        logger.debug(f"Initializing AirbossHypemanBot")
+        log.debug(f"Initializing AirbossHypemanBot")
         self.channel = None
-        self.client_id = DISCORD_CONFIG["airboss_hypeman"]["client_id"]
-        self.announce = APP_CONFIG["app"]["announce_bot_start"]
-        self.announce_msg = APP_CONFIG["app"]["announce_bot_msg"]
+        self.client_id = CFG_DISCORD.HYPEMAN.ID_CLIENT
+        self.announce = CFG.APP.BOT_ANNOUNCE
+        self.announce_msg = CFG.APP.BOT_ANNOUNCE_MSG
 
     # Called when the bot has connected to discord and is ready.
     async def on_ready(self):
         # now that bot is connected to discord, get the channel it's connected to
-        self.channel = self.get_channel(
-            int(DISCORD_CONFIG["airboss_hypeman"]["channel_id"])
-        )
+        self.channel = self.get_channel(CFG_DISCORD.HYPEMAN.ID_CHANNEL)
 
         # bot will announce in discord once it's connected if set in ini file
         if str(self.announce).lower() == "true":
             await self.channel.send(f"`{self.announce_msg}`")
 
-         logger.info(f"Discord bot ready.")
+        log.info(f"Discord bot ready.")
 
     async def on_message(self, message):
         # if message on channel is from this bot, we don't want to do
@@ -44,43 +36,43 @@ class AirbossHypemanBot(discord.Client):
         if message.author.id == self.user.id:
             return
 
-        logger.debug(f"Message from Discord - {msg}")
-
         # check message if it contains a command
         if message.content.startswith("!boatstuff"):
             # create and send greenie board to discord
-            logger.debug(f'Creating greenie board.')
-            if logger.level == logging.DEBUG:
-                await self.channel.send(f"```Creating greenie board.```")
-        else if message.content.startswith("!server_info"):
+            log.debug(f'Creating greenie board.')
+            # if log.level == logging.DEBUG:
+            #     await self.channel.send(f"```Creating greenie board.```")
+        elif message.content.startswith("!server_info"):
             # call server_info.py and send resulting text to discord
+            pass
+        else:
             pass
 
     async def on_error(self, event, *args, **kwargs):
-        logger.debug(f"Bot error - {event}\n{args}")
+        log.debug(f"Bot error - {event}\n{args}")
 
 
 class HypeManListener:
     def __init__(self, bot):
-        logger.debug("Initializing HypeManListener")
+        log.debug("Initializing HypeManListener")
 
         self.bot = bot
 
-        self._host = APP_CONFIG["app"]["host"]
-        self._port = int(APP_CONFIG["app"]["port"])
+        self._host = CFG.APP.HOST
+        self._port = CFG.APP.PORT
 
     async def start_listener(self):
         """Start Discord Bots"""
 
         # bind udp server to the host/port
         stream = await asyncio_dgram.bind((self._host, self._port))
-        logger.info(f"Listening on {stream.sockname}")
+        log.info(f"Listening on {stream.sockname}")
 
         # main listener loop
         while 1:
             # wait to receive data
             data, remote_addr = await stream.recv()
-            logger.debug(f"UDP received - {data.decode()!r}")
+            log.debug(f"From : {remote_addr}\tUDP received - {data.decode()!r}")
 
 
 if __name__ == "__main__":
@@ -99,10 +91,10 @@ if __name__ == "__main__":
 
     try:
         # run all tasks in infinite loop
-        logger.debug("Starting listener and bot.")
+        log.debug("Starting listener and bot.")
         loop.run_forever()
     except KeyboardInterrupt:
-        logger.info("Ctl-C received, shutting down.")
+        log.info("Ctl-C received, shutting down.")
     finally:
         loop.stop()
 

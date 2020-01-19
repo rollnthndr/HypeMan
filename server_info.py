@@ -4,39 +4,30 @@ import select
 import string
 import sys
 import time
-from pathlib import Path
-from config.config import APP_CONFIG
+from pathlib import Path, PurePath
 import logging
 from logging import config
+import config.settings as CFG
+from config.logger import logger
 
-# set up the global logger at logging level set in app_settings.ini
-logging.config.fileConfig(
-    Path(APP_CONFIG["app"]["logging_config"]), disable_existing_loggers=True,
-)
-if APP_CONFIG["app"]["debugging"].lower() == "true":
-    logger = logging.getLogger("debug")
-else:
-    logger = logging.getLogger("info")
-
-
-SERVERS = [
-		    ['JOW East', 'jow2.aggressors.ca'],
-		   	['JOW West', 'jow.aggressors.ca'],
-		   	['Local', '127.0.0.1']
-		]
+# Create a logger. Supply a filename, whether or not to 'w'rite or
+# 'a'ppend to the log file as well as a debug flag.
+log = logger(__name__, CFG.SERVERINFO.FILE_LOG, 'w', CFG.APP.DEBUG)
 
 
 class ServerInfo:
-	def __init__(self, servers):
+	def __init__(self):
 		self.__retry = 1
 		self.__delay = 1
 		self.__timeout = 1
-		self.__servers = servers
-		self.__output_file = f"{APP_CONFIG['app']['data_folder']}\server_info.txt"
+		self.__servers = CFG.SERVERINFO.SERVERS
+		self.__ports = CFG.SERVERINFO.PORTS
+		self.__output_file = CFG.SERVERINFO.FILE_DATA
 
-		logger.debug("ServerInfo initialized.")
-		logger.debug(f'Server info output file - {self.__output_file}')
+		log.debug("ServerInfo initialized.")
+		log.debug(f'Server info output file - {self.__output_file}')
 
+	# Returns port availability
 	def __isOpen(self, ip, port) -> bool:
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		s.settimeout(self.__timeout)
@@ -49,6 +40,7 @@ class ServerInfo:
 		finally:
 			s.close()
 
+	# Returns whether or not the servers port is open or not.
 	def __checkHost(self, ip, port) -> bool:
 		ipup = False
 		for i in range(self.__retry):
@@ -60,6 +52,7 @@ class ServerInfo:
 				
 		return ipup  
 
+	# Returns the IP address of the supplied hostname.
 	def __GetServerIP(self, hostname) -> str: 
 		try:         
 			host_ip = socket.gethostbyname(hostname) 
@@ -67,35 +60,49 @@ class ServerInfo:
 		except: 
 			return "Unable to get IP address" 
 
-
+	# Check a list of ports on a list of servers and log the the results as
+	# well as write the results out to a text file.
 	def check_servers(self):
-		logger.info("Checking server info.")
+		log.info("Checking server info.")
 
-		dcsStatus = "DOWN"
-		srsStatus = "DOWN"
-		LotATCStatus = "DOWN"
-
+		# Open the output text file to write the results to.
+		# This file is used by the other applications.
 		with open(self.__output_file, 'w') as writer:
-			for servername, hostaddress in self.__servers:
-				serverIP = self.__GetServerIP(hostaddress)	
-				if self.__checkHost(hostaddress, 10308):
-					dcsStatus = "UP"
-					
-				if self.__checkHost(hostaddress, 5002):
-					srsStatus = "UP"
-					
-				if self.__checkHost(hostaddress, 10310):
-					LotATCStatus = "UP"
-				
-				results = f'{servername}, hostname: {hostaddress}, ip: {serverIP}, DCS: {dcsStatus}, SRS: {srsStatus}, LotATC: {LotATCStatus}'
 
-				logger.info(results)
+			# Loop through the list of servers to check.
+			for servername, hostaddress in self.__servers:
+				# Get the IP address of the current server
+				ip = self.__GetServerIP(hostaddress)
+
+				# This will hold the status of the port being checked
+				# on the current server
+				port_status = ''
+
+				# Begin building the ouput string that will eventually be
+				# written out to the text file.
+				status_text = f'{servername}, Hostname: {hostaddress}, IP: {ip}'				
+				
+				# Loop through the list of ports to check.
+				for portname, port in self.__ports:
+					# Check to see if the port is open or not and set
+					# the status flag accordingly.
+					if self.__checkHost(ip, port):
+						port_status = 'UP'
+					else:
+						port_status = 'DOWN'
+
+					# Append the port result to output string. 
+					status_text += f' {portname}: {port_status}'
+
+				# log the output string for this server
+				log.info(status_text)
 		
-				writer.write(f'{results}\n')
+				# write the output string to a text file for future use
+				writer.write(f'{status_text}\n')
 
 
 if __name__ == "__main__":
-	server_info = ServerInfo(SERVERS)
+	server_info = ServerInfo()
 
 	server_info.check_servers()
 

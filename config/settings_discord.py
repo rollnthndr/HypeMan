@@ -1,0 +1,11 @@
+class HYPEMAN:
+    ID_CLIENT = 'NjY3NzUwMTc3OTIyMDg4OTYx.XiHQ6A.y-4uX_CDXqYhqZ-fbNeq9HghncA'
+    ID_CHANNEL = [
+        ['airboss'], [666334399998066718]
+    ]
+
+class COMMAND:
+    ID_PRIVATE_COMMAND = 361935537571102720
+
+class MISC:
+    SERVER_NAME = '416 Lynx Server'
