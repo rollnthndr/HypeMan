@@ -1,5 +1,6 @@
 import logging
-from logging import config
+# from logging import config
+
 
 def logger(module: str, filename: str, mode: str, debug: bool) -> logging.Logger:
     logger = logging.getLogger(module)

@@ -1,18 +1,19 @@
 import subprocess
-import logging
-from logging import config
-from pathlib import Path
 import discord
 import asyncio
 import asyncio_dgram
+import logging
 import config.settings as CFG
 import config.settings_discord as CFG_DISCORD
 from config.logger import logger
 
-log = logger(__name__, CFG.APP.FILE_LOG, 'w', CFG.APP.DEBUG)
+log = logger(__name__, CFG.APP.FILE_LOG, "w", CFG.APP.DEBUG)
+
 
 class AirbossHypemanBot(discord.Client):
-    def __init__(self, client_id: str, channel_id: int, announce: bool, announce_msg: str ):
+    def __init__(
+        self, client_id: str, channel_id: int, announce: bool, announce_msg: str
+    ):
         super().__init__()
         self.channel = None
         self.client_id = client_id
@@ -42,23 +43,39 @@ class AirbossHypemanBot(discord.Client):
         # check message if it contains a command
         if message.content.startswith("!boatstuff"):
             # create and send greenie board to discord
-            log.info(f'Creating greenie board.')
+            log.info(f"Creating greenie board.")
             if log.level == logging.DEBUG:
                 await self.channel.send(f"```Creating greenie board.```")
 
         elif message.content.startswith("!server_info"):
             # call server_info.py and send resulting text to discord
-            log.info('Getting server info.')
+            log.info("Getting server info.")
             if log.level == logging.DEBUG:
                 await self.channel.send(f"```Getting server info.```")
 
-            subprocess.run(['python', 'server_info.py'])
+            # Retrieve the server info and send it to discord
+            await self._do_sever_info()
         else:
             pass
 
     async def on_error(self, event, *args, **kwargs):
         log.debug(f"Bot error - {event}\n{args}")
 
+    async def _do_sever_info(self):
+        # Check the servers and create the output txt file
+        subprocess.run(["python", "server_info.py"])
+
+        # Send the resulting txt file text to discord
+        msg_text = ""
+
+        with open(CFG.SERVERINFO.FILE_DATA) as file:
+            content = file.readlines()
+            for line in content:
+                msg_text += f"> {line}\n"
+
+        # msg_text += f"`"
+
+        await self.channel.send(msg_text)
 
 
 class HypeManListener:
@@ -86,10 +103,12 @@ class HypeManListener:
 if __name__ == "__main__":
 
     # Create the BOT and Listener classes
-    hm_bot = AirbossHypemanBot(CFG_DISCORD.HYPEMAN.ID_CLIENT,
-                                CFG_DISCORD.HYPEMAN.ID_CHANNEL,
-                                CFG_DISCORD.HYPEMAN.BOT_ANNOUNCE,
-                                CFG_DISCORD.HYPEMAN.BOT_ANNOUNCE_MSG)
+    hm_bot = AirbossHypemanBot(
+        CFG_DISCORD.HYPEMAN.ID_CLIENT,
+        CFG_DISCORD.HYPEMAN.ID_CHANNEL,
+        CFG_DISCORD.HYPEMAN.BOT_ANNOUNCE,
+        CFG_DISCORD.HYPEMAN.BOT_ANNOUNCE_MSG,
+    )
     hm_listener = HypeManListener(hm_bot)
 
     # get the event main loop to run the tasks asynchronously

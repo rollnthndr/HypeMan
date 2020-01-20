@@ -1,42 +1,45 @@
-import csv
 import sys
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
+from config.logger import logger
+import config.settings as CFG
 
-GOOGLE_LSO_FILE = 'LSO_Grades'
-GOOGLE_CREDS_FILE = 'lso-grade-sheet-265019-66cf26ebfe79.json'
+log = logger(__name__, CFG.GOOGLE.FILE_GOOGLE_LOG, "w", CFG.APP.DEBUG)
 
-#print('Length of sys.argv:')
-#print(len(sys.argv))
+# print('Length of sys.argv:')
+# print(len(sys.argv))
 if len(sys.argv) == 2:
-	
-	line = sys.argv[1]	
-	# line = "TG, (OK), 3.0 PT, F(LOLUR)X F(LOLUR)IM  (F)IC , 1-wire, groove time 22.0 seconds, (CASE I)"
-	#x = csv.reader(line)
-	#y = line.split(",")
 
-	result = [x.strip() for x in line.split(',')]
-	
-	now = datetime.now() # current date and time
-	result.append(now.strftime("%d/%m/%Y"))
-	result.append(now.strftime("%H:%M:%S"))
-#	print(list(result))
-	
-	scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-	creds = ServiceAccountCredentials.from_json_keyfile_name(GOOGLE_CREDS_FILE, scope)
-	client = gspread.authorize(creds)
+    line = sys.argv[1]
+    # line = "TG, (OK), 3.0 PT, F(LOLUR)X F(LOLUR)IM  (F)IC , 1-wire, groove time 22.0 seconds, (CASE I)"
+    # x = csv.reader(line)
+    # y = line.split(",")
 
-	sheet = client.open(GOOGLE_LSO_FILE).sheet1
-	#list_of_hashes = sheet.get_all_records()
+    result = [x.strip() for x in line.split(",")]
 
+    now = datetime.now()  # current date and time
+    result.append(now.strftime("%d/%m/%Y"))
+    result.append(now.strftime("%H:%M:%S"))
+    # 	print(list(result))
 
-	print('Inserting LSO grade into Google sheet...')
+    scope = [
+        "https://spreadsheets.google.com/feeds",
+        "https://www.googleapis.com/auth/drive",
+    ]
+    creds = ServiceAccountCredentials.from_json_keyfile_name(
+        CFG.GOOGLE.CREDS_FILE, scope
+    )
+    client = gspread.authorize(creds)
 
-	row = result
-#	print(row)
+    sheet = client.open(CFG.GOOGLE.SHEET_LSO_GRADES).sheet1
+    # list_of_hashes = sheet.get_all_records()
 
-	index = 2
-	sheet.insert_row(row, index)
-	
-#	print('Done!')
+    log.info("Inserting LSO grade into Google sheet.")
+    row = result
+    # 	print(row)
+
+    index = 2
+    sheet.insert_row(row, index)
+
+# 	print('Done!')
