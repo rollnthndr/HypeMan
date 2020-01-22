@@ -56,23 +56,23 @@ class trapsheet:
             log.debug(f"Error getting trapsheets.  Error - {e}")
             self._trapsheet_recent = ""
 
-    # def _setSpine(self, ax, color):
-    #     ax.spines["bottom"].set_color(color)
-    #     ax.spines["top"].set_color(color)
-    #     ax.spines["left"].set_color(color)
-    #     ax.spines["right"].set_color(color)
+    def _setSpine(self, ax, color):
+        ax.spines["bottom"].set_color(color)
+        ax.spines["top"].set_color(color)
+        ax.spines["left"].set_color(color)
+        ax.spines["right"].set_color(color)
 
-    # def _addAoARect(self, ax, v1, v2, color, alpha):
-    #     rect = patches.Rectangle(
-    #         (0, v1),
-    #         1.2,
-    #         v2 - v1,
-    #         linewidth=0,
-    #         edgecolor="none",
-    #         facecolor=color,
-    #         alpha=alpha,
-    #     )
-    #     ax.add_patch(rect)
+    def _addAoARect(self, ax, v1, v2, color, alpha):
+        rect = patches.Rectangle(
+            (0, v1),
+            1.2,
+            v2 - v1,
+            linewidth=0,
+            edgecolor="none",
+            facecolor=color,
+            alpha=alpha,
+        )
+        ax.add_patch(rect)
 
     def plotTrapsheet(self):
       
@@ -136,7 +136,7 @@ class trapsheet:
         # ax.set_xlim(m)
         ax.grid(linestyle="-", linewidth="0.5", color=gridcolor)
         ax.tick_params(axis="both", which="both", length=0)
-        setSpine(ax, "none")
+        self._setSpine(ax, "none")
         ax.spines["right"].set_color(spinecolor)
         ax.spines["left"].set_color(spinecolor)
         plt.setp(ax.get_xticklabels(), color=labelcolor)
@@ -172,7 +172,7 @@ class trapsheet:
         # ax.invert_xaxis()
         ax.grid(linestyle="-", linewidth="0.5", color=gridcolor)
         ax.tick_params(axis="both", which="both", length=0)
-        setSpine(ax, "none")
+        self._setSpine(ax, "none")
         ax.spines["right"].set_color(spinecolor)
         ax.spines["left"].set_color(spinecolor)
         # major_ticks = np.arange(0, 101, 20)
@@ -306,7 +306,7 @@ class trapsheet:
         #    ax.tick_params(axis='x', colors='red')
         #    ax.tick_params(axis='y', colors='red')
         ax.tick_params(axis="both", which="both", length=0)
-        setSpine(ax, "none")
+        self._setSpine(ax, "none")
         ax.spines["right"].set_color(spinecolor)
         ax.spines["left"].set_color(spinecolor)
         ax.spines["bottom"].set_color(spinecolor)
