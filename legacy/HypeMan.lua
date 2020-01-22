@@ -7,7 +7,7 @@
 
 -- HypeMan requires JSON.lua from here http://regex.info/blog/lua/json in C:\HypeMan
 -- TODO - can this be loaded with loadfile()?
-JSON = (loadfile "C:/HypeMan/JSON.lua")() -- one-time load of the routines
+JSON = (loadfile "C:/HypeMan/deps/JSON.lua")() -- one-time load of the routines
 
 HypeMan = {}
 -- Configuration Options

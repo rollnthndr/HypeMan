@@ -72,7 +72,8 @@ class ServerInfo:
                 port_status = ""
 
                 # Begin building the ouput string that will eventually be
-                # written out to the text file.
+                # written out to the text file. This string contains formatting
+                # characters for the discord message.
                 status_text = f"**`{servername}:`** {hostaddress}\t**`IP:`** {ip}\t"
 
                 # Loop through the list of ports to check.

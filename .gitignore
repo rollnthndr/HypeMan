@@ -5,12 +5,13 @@ luvi.exe
 luvit.exe
 
 *.lin.code-workspace
-*.log
-*.txt
+logs/
+data/
 __pycache__/
 venv-lin/
 deps/
 .vscode/
+temp/
 discord_api_keys.ini
 private_api_keys.lua
 _config_settings.txt
