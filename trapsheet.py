@@ -12,10 +12,10 @@ log = logger(__name__, CFG.TRAPSHEET.FILE_TRAPESHEET_LOG, "w", CFG.APP.DEBUG)
 
 
 class trapsheet:
-    def __init__(self, trapsheet_folder, trapsheet_image):
+    def __init__(self, trapsheet_folder: str, trapsheet_image: str):
         self._trapsheet_folder = trapsheet_folder
         self._trapsheet_image = trapsheet_image
-        self._trapsheet_recent = ''
+        self._trapsheet_recent = ""
         self._trapsheet_data = {}
         self._parse_info = {}
 
@@ -45,7 +45,9 @@ class trapsheet:
 
         self._trapsheet_data = data
 
-        log.debug(f"Grade: {self._trapsheet_data['Grade']} Points: {self._trapsheet_data['Points'][-1]} Details: {self._trapsheet_data['Details']}")
+        log.debug(
+            f"Grade: {self._trapsheet_data['Grade']} Points: {self._trapsheet_data['Points'][-1]} Details: {self._trapsheet_data['Details']}"
+        )
 
     def _getRecentTrapsheet(self):
         try:
@@ -75,7 +77,7 @@ class trapsheet:
         ax.add_patch(rect)
 
     def plotTrapsheet(self):
-      
+
         self._getRecentTrapsheet()
         self._parseFilename()
         self._ReadTrapsheet()
@@ -98,7 +100,10 @@ class trapsheet:
             [[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]]
         )
 
-        xy = np.array([self._trapsheet_data["X"] + dx, self._trapsheet_data["Z"] + dy]) / 1852
+        xy = (
+            np.array([self._trapsheet_data["X"] + dx, self._trapsheet_data["Z"] + dy])
+            / 1852
+        )
         xy = np.dot(rotMatrix, xy)
 
         # fig = plt.figure(facecolor="w")
@@ -297,10 +302,34 @@ class trapsheet:
 
         ax.plot([0, xmax], [8.8, 8.8], "g-", linewidth=1.2, alpha=0.8, linestyle="--")
         ax.plot([0, xmax], [7.4, 7.4], "g-", linewidth=1.2, alpha=0.8, linestyle="--")
-        ax.plot(xy[0][:-num_aoa], self._trapsheet_data["AoA"][:-num_aoa], "g-", linewidth=16, alpha=0.1)
-        ax.plot(xy[0][:-num_aoa], self._trapsheet_data["AoA"][:-num_aoa], "g-", linewidth=10, alpha=0.1)
-        ax.plot(xy[0][:-num_aoa], self._trapsheet_data["AoA"][:-num_aoa], "g-", linewidth=6, alpha=0.15)
-        ax.plot(xy[0][:-num_aoa], self._trapsheet_data["AoA"][:-num_aoa], "w-", linewidth=1, alpha=0.45)
+        ax.plot(
+            xy[0][:-num_aoa],
+            self._trapsheet_data["AoA"][:-num_aoa],
+            "g-",
+            linewidth=16,
+            alpha=0.1,
+        )
+        ax.plot(
+            xy[0][:-num_aoa],
+            self._trapsheet_data["AoA"][:-num_aoa],
+            "g-",
+            linewidth=10,
+            alpha=0.1,
+        )
+        ax.plot(
+            xy[0][:-num_aoa],
+            self._trapsheet_data["AoA"][:-num_aoa],
+            "g-",
+            linewidth=6,
+            alpha=0.15,
+        )
+        ax.plot(
+            xy[0][:-num_aoa],
+            self._trapsheet_data["AoA"][:-num_aoa],
+            "w-",
+            linewidth=1,
+            alpha=0.45,
+        )
         ax.grid(linestyle="-", linewidth="0.5", color=gridcolor)
         # plt.gca().invert_yaxis()
         #    ax.tick_params(axis='x', colors='red')
@@ -348,12 +377,12 @@ class trapsheet:
         #    print("Last Modified Time : ", modificationTime )
         timestampStr = mod_timestamp.strftime("%b %d %Y, %H:%M:%S")
         pinfo["time"] = timestampStr
-        log.debug(f'timestampStr - {timestampStr}')
+        log.debug(f"timestampStr - {timestampStr}")
         ps = p.stem
         ps = ps.replace("AIRBOSS-", "")
         ind = ps.find("-")
         ps = ps[15 + 1 : -1]
-        log.debug(f'ps - {ps}')
+        log.debug(f"ps - {ps}")
         ind = ps.rfind("-")
         ps = ps[0:ind]
 
@@ -370,7 +399,7 @@ class trapsheet:
         else:
             log.debug("unknown aircraft.")
 
-        log.debug(f'ps - {ps}')
+        log.debug(f"ps - {ps}")
 
         pinfo["callsign"] = ps[0:-1]
 
@@ -387,10 +416,9 @@ if __name__ == "__main__":
         CFG.TRAPSHEET.IMAGE_TRAPESHEET
     )
 
+    trap_sheet.plotTrapsheet()
+
     # trap_file = trap_sheet.getRecentTrapsheet()
     # log.debug(f"Final file is: {trap_file}")
     # pinfo = trap_sheet.parseFilename(trap_file)
     # ts = trapsheet.ReadTrapsheet(trap_file)
-
-    trap_sheet.plotTrapsheet()
-

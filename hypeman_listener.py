@@ -12,7 +12,8 @@ log = logger(__name__, CFG.APP.FILE_LOG, "w", CFG.APP.DEBUG)
 
 class AirbossHypemanBot(discord.Client):
     def __init__(
-        self, client_id: str, channel_id: int, announce: bool, announce_msg: str
+        self, client_id: str, channel_id: int, announce: bool, announce_msg: str,
+        server_info_data: str, greenieboard_img: str
     ):
         super().__init__()
         self.channel = None
@@ -20,6 +21,8 @@ class AirbossHypemanBot(discord.Client):
         self.channel_id = channel_id
         self.announce = announce
         self.announce_msg = announce_msg
+        self.server_info_data = server_info_data
+        self.greenieboard_img = greenieboard_img
 
         log.debug(f"Initialized AirbossHypemanBot")
 
@@ -47,6 +50,9 @@ class AirbossHypemanBot(discord.Client):
             if log.level == logging.DEBUG:
                 await self.channel.send(f"```Creating greenie board.```")
 
+            # Create the greenie board and send it to discord
+            await self._do_greenie_board()
+
         elif message.content.startswith("!server_info"):
             # call server_info.py and send resulting text to discord
             log.info("Getting server info.")
@@ -62,42 +68,61 @@ class AirbossHypemanBot(discord.Client):
         log.debug(f"Bot error - {event}\n{args}")
 
     async def _do_sever_info(self):
-        # Check the servers and create the output txt file
-        subprocess.run(["python", "server_info.py"])
+        try:
+            # Check the servers and create the output txt file
+            subprocess.run(["python", "server_info.py"])
 
-        # Send the resulting txt file text to discord
-        msg_text = ""
+            # Send the resulting txt file text to discord
+            msg_text = ""
 
-        with open(CFG.SERVERINFO.FILE_DATA) as file:
-            content = file.readlines()
-            for line in content:
-                msg_text += f"> {line}\n"
+            with open(self.server_info_data) as file:
+                content = file.readlines()
+                for line in content:
+                    msg_text += f"> {line}\n"
 
-        # msg_text += f"`"
+            # msg_text += f"`"
 
-        await self.channel.send(msg_text)
+            await self.channel.send(msg_text)
+        except Exception as e:
+            log.info(f'Error - {e}')
+
+    async def _do_greenie_board(self):
+        try:
+            # Build the board image
+            subprocess.run(["python", "boardroom.py"])
+
+            # build the final boardroom image
+            subprocess.run(["python", "boardroom_compose.py"])
+            
+            # send image file to discord
+            await self.channel.send(file=discord.File(self.greenieboard_img))
+        except Exception as e:
+            log.info(f'Error - {e}')
 
 
 class HypeManListener:
-    def __init__(self, bot):
+    def __init__(self, host: str, port: int, bot: AirbossHypemanBot):
         self.bot = bot
-        self._host = CFG.APP.HOST
-        self._port = CFG.APP.PORT
+        self._host = host
+        self._port = port
 
         log.debug("Initialized HypeManListener")
 
     async def start_listener(self):
-        """Start Discord Bots"""
+        """Start listening for DCS messages"""
 
-        # bind udp server to the host/port
-        stream = await asyncio_dgram.bind((self._host, self._port))
-        log.info(f"Listening on {stream.sockname}")
+        try:
+            # bind udp server to the host/port
+            stream = await asyncio_dgram.bind((self._host, self._port))
+            log.info(f"Listening on {stream.sockname}")
 
-        # main listener loop
-        while 1:
-            # wait to receive data
-            data, remote_addr = await stream.recv()
-            log.debug(f"From : {remote_addr}\tUDP received - {data.decode()!r}")
+            # main listener loop
+            while 1:
+                # wait to receive data
+                data, remote_addr = await stream.recv()
+                log.debug(f"From : {remote_addr}\tUDP received - {data.decode()!r}")
+        except Exception as e:
+            log.debug(f'Error - {e}')
 
 
 if __name__ == "__main__":
@@ -108,8 +133,14 @@ if __name__ == "__main__":
         CFG_DISCORD.HYPEMAN.ID_CHANNEL,
         CFG_DISCORD.HYPEMAN.BOT_ANNOUNCE,
         CFG_DISCORD.HYPEMAN.BOT_ANNOUNCE_MSG,
+        CFG.SERVERINFO.FILE_DATA,
+        CFG.GREENIEBOARD.IMAGE_BOARDROOM_FINAL
     )
-    hm_listener = HypeManListener(hm_bot)
+    hm_listener = HypeManListener(
+        CFG.APP.HOST,
+        CFG.APP.PORT,
+        hm_bot
+    )
 
     # get the event main loop to run the tasks asynchronously
     loop = asyncio.get_event_loop()

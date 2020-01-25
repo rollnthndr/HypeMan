@@ -19,6 +19,7 @@ hypeman_listener.lua - this is the backend listener that receives the messages f
 - discord
 - PyNaCl
 - asyncio-dgram
+- pytest
 
 ### Lua #
 

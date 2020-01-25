@@ -2,6 +2,7 @@ import socket
 import time
 import config.settings as CFG
 from config.logger import logger
+from logging import Logger
 
 # Create a logger. Supply a filename, whether or not to 'w'rite or
 # 'a'ppend to the log file as well as a debug flag.
@@ -9,7 +10,12 @@ log = logger(__name__, CFG.SERVERINFO.FILE_LOG, "w", CFG.APP.DEBUG)
 
 
 class ServerInfo:
-    def __init__(self, servers, ports, output_file):
+    def __init__(
+        self,
+        servers: list,
+        ports: list,
+        output_file: str
+    ):
         self.__retry = 1
         self.__delay = 1
         self.__timeout = 1
@@ -21,42 +27,49 @@ class ServerInfo:
         log.debug(f"Server info output file - {self.__output_file}")
 
     # Returns port availability
-    def __isOpen(self, ip, port) -> bool:
+    def __isOpen(self, ip: str, port: int) -> bool:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(self.__timeout)
+        port_open = False
+
         try:
             s.connect((ip, int(port)))
             s.shutdown(socket.SHUT_RDWR)
-            return True
+            port_open = True
         except Exception as e:
             log.debug(f"Error connecting to port {port} at {ip}. Error - {e}")
-            return False
         finally:
             s.close()
+            return port_open
 
     # Returns whether or not the servers port is open or not.
-    def __checkHost(self, ip, port) -> bool:
+    def __checkHost(self, ip: str, port: int) -> bool:
         ipup = False
-        for i in range(self.__retry):
-            if self.__isOpen(ip, port):
-                ipup = True
-                break
-            else:
-                time.sleep(self.__delay)
-        return ipup
+        
+        try:
+            for i in range(self.__retry):
+                if self.__isOpen(ip, port):
+                    ipup = True
+                    break
+                else:
+                    time.sleep(self.__delay)
+        except Exception as e:
+            log.debug(f'Error getting port state.  Error - {e}')
+        finally:
+            return ipup
 
     # Returns the IP address of the supplied hostname.
-    def __GetServerIP(self, hostname) -> str:
+    def __GetServerIP(self, hostname: str) -> str:
         try:
             host_ip = socket.gethostbyname(hostname)
             return host_ip
         except Exception as e:
-            return f"Unable to get IP address\t Error: {e}"
+            log.debug(f"Unable to get IP address\t Error: {e}")
+            return ''
 
     # Check a list of ports on a list of servers and log the the results as
     # well as write the results out to a text file.
     def check_servers(self):
-        log.info("Checking server info.")
 
         # Open the output text file to write the results to.
         # This file is used by the other applications.
@@ -94,10 +107,13 @@ class ServerInfo:
                 # write the output string to a text file for future use
                 writer.write(f"{status_text}\n")
 
+        log.info("Server info check complete.")
 
 if __name__ == "__main__":
     server_info = ServerInfo(
-        CFG.SERVERINFO.SERVERS, CFG.SERVERINFO.PORTS, CFG.SERVERINFO.FILE_DATA
+        CFG.SERVERINFO.SERVERS,
+        CFG.SERVERINFO.PORTS,
+        CFG.SERVERINFO.FILE_DATA
     )
 
     server_info.check_servers()

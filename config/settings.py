@@ -57,4 +57,4 @@ class SERVERINFO:
     FILE_LOG = os.path.join(APP.FOLDER_LOGS, 'server_info.log')
 
     # data output file name and location
-    FILE_DATA = os.path.join(APP.FOLDER_DATA, 'server_info.txt')
+    FILE_DATA = os.path.join(APP.FOLDER_DATA, 'server_info_data.txt')

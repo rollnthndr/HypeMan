@@ -3,12 +3,8 @@ import json
 import os
 import time
 import matplotlib.pyplot as plt
-
-# import matplotlib.colors as mcolors
 from matplotlib.table import Table
 from matplotlib.font_manager import FontProperties
-
-# import numpy as np
 import statistics
 from oauth2client.service_account import ServiceAccountCredentials
 from config.logger import logger
@@ -19,7 +15,7 @@ log = logger(__name__, CFG.GREENIEBOARD.FILE_BOARDROOM_LOG, "w", CFG.APP.DEBUG)
 
 def updateDatabase(path):
     if time.time() - getModificationTimeSeconds(path) > 3600:
-        log.debug("Updating from Google.")
+        log.info("Updating from Google.")
         updateFromGoogle()
     else:
         log.info("Less than one hour since last refresh, skipping pull from google.")
@@ -41,7 +37,7 @@ def updateFromGoogle():
         with open(CFG.GREENIEBOARD.FILE_DATA_LSO, "w") as outfile:
             json.dump(list_of_hashes, outfile)
     except Exception as e:
-        log.debug(f"Exception thrown in updateFromGoogle. Error - {e}")
+        log.debug(f"Error - {e}")
         return
 
     log.info("Local HypeMan LSO grade database updated from Google Sheets.")
@@ -77,7 +73,7 @@ def calculateGradeQual(curList, grade0):
         # print('(QUAL) points ', pt, ' for ', curList[0]['pilot'])
         return pt
     except Exception as e:
-        log.debug(f"- {e}")
+        log.debug(f"Error - {e}")
         return float(-1.0)
 
 
@@ -89,7 +85,7 @@ def calculateGradeCivilian(curList, grade0):
         try:
             pt = float(i["points"])
         except Exception as e:
-            log.debug(f'- {e}')
+            log.debug(f'Error - {e}')
             x = 0
 
         if pt >= 0.0:
