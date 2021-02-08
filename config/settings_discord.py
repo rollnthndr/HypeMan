@@ -1,8 +1,5 @@
 class HYPEMAN:
     ID_CLIENT = 'Some ID'
-    # ID_CHANNEL = [
-    #     ['airboss'], [666334399998066718]
-    # ]
     ID_CHANNEL = 1234567890
     BOT_ANNOUNCE = True
     BOT_ANNOUNCE_MSG = 'HypeMan standing by to standby.'
