@@ -34,7 +34,8 @@ class GREENIEBOARD:
 
 class TRAPSHEET:
     # folder where DCS outputs the trapsheets
-    FOLDER_LOCATION = 'C:/Users/nascar/Saved Games/DCS.openbeta_server'
+    # typically this is something like C:/Users/{username}/Saved Games/DCS.openbeta_server
+    FOLDER_LOCATION = 'your server saved games location'
     FILE_TRAPESHEET_LOG = os.path.join(APP.FOLDER_LOGS, 'trapsheet.log')
     IMAGE_BOAT_TOP = os.path.join(APP.FOLDER_IMG, 'boat_top.png')
     IMAGE_BOAT_SIDE = os.path.join(APP.FOLDER_IMG, 'boat_side.png')
