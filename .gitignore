@@ -19,14 +19,8 @@ lso-grade-sheet-265019-66cf26ebfe79.json
 lso-grade-sheet-265019-6b037984a20a.json
 lsogrades-1612828214050-21128c22fff6.json
 
-images/board.png
-images/final.jpg
-images/trapsheet.png
-server_info.txt
-logs/boardroom_compose_log.txt
-logs/boardroom_log.txt
-logs/trapsheet.log
+
 gateway.json
 discordia.log
 logs/hypeman.log
-config/settings_discord.py
+settings_discord.py
