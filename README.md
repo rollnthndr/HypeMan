@@ -1,3 +1,14 @@
+```python
+"""
+
+NOT READY FOR RELEASE
+
+- Currently woking on hypeman_listener.py
+- Information below is out of date and not applicable at this time.
+
+"""
+```
+
 # HypeMan #
 
 HypeMan brings the hype
