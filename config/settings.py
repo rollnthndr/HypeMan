@@ -14,6 +14,7 @@ class APP:
 
 class GOOGLE:
     FILE_GOOGLE_LOG = os.path.join(APP.FOLDER_LOGS, 'google_sheet.log')
+    # Google generated cedentials json file. Must be placed in the config folder.
     CREDS_FILE = os.path.join(APP.FOLDER_CONFIG, 'lso-grade-sheet-265019-6b037984a20a.json')
     SHEET_LSO_GRADES = 'LSO_Grades'
     SHEET_FLIGHT_STATS = 'Flight_Stats'
@@ -33,9 +34,9 @@ class GREENIEBOARD:
 
 
 class TRAPSHEET:
-    # folder where DCS outputs the trapsheets
-    # typically this is something like C:/Users/{username}/Saved Games/DCS.openbeta_server
-    FOLDER_LOCATION = 'your server saved games location'
+    # Folder where DCS/MOOSE outputs the trapsheets.
+    # Typically this is something like C:/Users/{username}/Saved Games/DCS.openbeta_server.
+    FOLDER_LOCATION = 'C:/Users/nascar/Saved Games/DCS.openbeta_server'
     FILE_TRAPESHEET_LOG = os.path.join(APP.FOLDER_LOGS, 'trapsheet.log')
     IMAGE_BOAT_TOP = os.path.join(APP.FOLDER_IMG, 'boat_top.png')
     IMAGE_BOAT_SIDE = os.path.join(APP.FOLDER_IMG, 'boat_side.png')
@@ -43,7 +44,7 @@ class TRAPSHEET:
 
 
 class SERVERINFO:
-    # servers to check
+    # Servers to check.
     SERVERS = [
         # ['JOW West', 'jow.aggressors.ca'],
         # ['JOW East', 'jow2.aggressors.ca'],
