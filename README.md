@@ -29,6 +29,8 @@ hypeman_listener.lua - this is the backend listener that receives the messages f
 
 ## INSTALLATION #
 
+Download the entire repo into c:\Hypeman.
+
 Include this file in your mission with a DO SCRIPT, or DO SCRIPT FILE any time after Mist has been loaded.
 
 TIPS AND TRICKS
@@ -43,6 +45,11 @@ Simply add that code to any mission, even if you do not have HypeMan running or 
 is wrapped in an assert() call any errors are supressed.
 
 ## USAGE #
+
+Start hypeman_listener.py on the server using the included virtual environment. For example, you could use the following commands in a windows command prompt (not powershell):
+        ```bat
+        cd c:\hypeman; .\env-win\Scripts\activate.bat; python .\hypeman_listener.py
+        ```
 
 Once loaded, HypeMan monitors for several events: takeoffs, landings, crash, eject, etc, and will automatically report
 these events to Discord.

@@ -7,7 +7,7 @@ import config.settings as CFG
 import config.settings_discord as CFG_DISCORD
 from config.logger import logger
 
-log = logger(__name__, CFG.APP.FILE_LOG, "w", CFG.APP.DEBUG)
+log = logger(__name__, CFG.APP.FILE_HYPEMAN_LOG, "w", CFG.APP.DEBUG)
 
 
 class AirbossHypemanBot(discord.Client):

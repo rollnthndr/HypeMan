@@ -6,7 +6,7 @@ from logging import Logger
 
 # Create a logger. Supply a filename, whether or not to 'w'rite or
 # 'a'ppend to the log file as well as a debug flag.
-log = logger(__name__, CFG.SERVERINFO.FILE_LOG, "w", CFG.APP.DEBUG)
+log = logger(__name__, CFG.SERVERINFO.FILE_SERVER_LOG, "w", CFG.APP.DEBUG)
 
 
 class ServerInfo:

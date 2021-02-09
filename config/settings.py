@@ -8,12 +8,12 @@ class APP:
     FOLDER_IMG = os.path.join(os.getcwd(), 'images')
     FOLDER_DATA = os.path.join(os.getcwd(), 'data')
     FOLDER_LOGS = os.path.join(os.getcwd(), 'logs')
-    FILE_LOG = os.path.join(FOLDER_LOGS, 'hypeman.log')
+    FILE_HYPEMAN_LOG = os.path.join(FOLDER_LOGS, 'hypeman.log')
 
 
 class GOOGLE:
     FILE_GOOGLE_LOG = os.path.join(APP.FOLDER_LOGS, 'google_sheet.log')
-    CREDS_FILE = 'lso-grade-sheet-265019-66cf26ebfe79.json'
+    CREDS_FILE = 'lso-grade-sheet-265019-6b037984a20a.json'
     SHEET_LSO_GRADES = 'LSO_Grades'
     SHEET_FLIGHT_STATS = 'Flight_Stats'
 
@@ -54,7 +54,7 @@ class SERVERINFO:
         ['LOTAC', 10310]
     ]
     # log file name and location
-    FILE_LOG = os.path.join(APP.FOLDER_LOGS, 'server_info.log')
+    FILE_SERVER_LOG = os.path.join(APP.FOLDER_LOGS, 'server_info.log')
 
     # data output file name and location
     FILE_DATA = os.path.join(APP.FOLDER_DATA, 'server_info_data.txt')

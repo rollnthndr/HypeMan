@@ -30,3 +30,4 @@ logs/hypeman.log
 hypeman_listener.py
 hypeman.win.code-workspace
 hypeman.lin.code-workspace
+config/settings_discord.py
