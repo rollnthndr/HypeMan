@@ -22,8 +22,7 @@ lsogrades-1612828214050-21128c22fff6.json
 
 gateway.json
 discordia.log
-logs/hypeman.log
-settings_discord.py
-board.png
-boardroom_final.jpg
+config/settings_discord.py
+images/board.png
+images/boardroom_final.jpg
 
