@@ -23,7 +23,7 @@ class GREENIEBOARD:
     FILE_BOARDROOM_LOG = os.path.join(APP.FOLDER_LOGS, 'boardroom.log')
     FILE_BOARDROOM_COMPOSE_LOG = os.path.join(APP.FOLDER_LOGS, 'boardroom_compose.log')
     FILE_DATA_LSO = os.path.join(APP.FOLDER_DATA, 'lso_data.txt')
-    BOARD_TITLE = '416 Lynx Squadron '
+    BOARD_TITLE = '416 Lynx Sqdn '
     BOARD_COL = 17
     BOARD_ROW = 15
     IMAGE_BOARD = os.path.join(APP.FOLDER_IMG, 'board.png')
