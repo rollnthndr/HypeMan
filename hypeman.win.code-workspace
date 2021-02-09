@@ -6,5 +6,14 @@
 	],
 	"settings": {
 		"python.pythonPath": "env-win\\Scripts\\python.exe"
-	}
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-python.python"
+		]
+	},
+	"recommendations": [
+		"ms-python.python",
+		"ms-python.vscode-pylance"
+	],
 }
