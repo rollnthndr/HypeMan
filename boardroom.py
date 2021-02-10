@@ -14,7 +14,7 @@ log = logger(__name__, CFG.GREENIEBOARD.FILE_BOARDROOM_LOG, "w", CFG.APP.DEBUG)
 
 
 def updateDatabase(path):
-    if time.time() - getModificationTimeSeconds(path) > 3600:
+    if time.time() - getModificationTimeSeconds(path) > 1:
         log.info("Updating from Google.")
         updateFromGoogle()
     else:

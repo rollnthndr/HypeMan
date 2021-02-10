@@ -1,10 +1,3 @@
--- Instructions: include HypeMan in a mission either with a DO SCRIPT FILE, or a 
--- DO SCRIPT containing the following:
--- assert(loadfile("C:/HypeMan/HypeMan.lua"))()
---
--- The DO SCRIPT assert(loadfile())() is preferred because then HypeMan can be updated and modified
--- and applied to all .miz files without having to modify each individually.
-
 -- HypeMan requires JSON.lua from here http://regex.info/blog/lua/json in C:\HypeMan
 -- TODO - can this be loaded with loadfile()?
 JSON = (loadfile "C:/HypeMan/deps/JSON.lua")() -- one-time load of the routines
@@ -71,7 +64,7 @@ if HypeManAnnounceMissionStart then
 	local theDate = mist.getDateString(true, true)	
 	local theTime = mist.getClockString()	
 	local theatre = env.mission.theatre	
-	HypeMan.sendBotMessage('$SERVERNAME - New mission launched in the ' .. theatre .. '.  HypeMan standing by to stand by.  Local mission time is ' .. theTime .. ', ' .. theDate)
+	HypeMan.sendBotMessage('$SERVERNAME - New mission launched in the ```' .. theatre .. '```.  HypeMan standing by to stand by.  Local mission time is ' .. theTime .. ', ' .. theDate)
 end
 
 local function HypeManGetName(initiator)
