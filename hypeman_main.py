@@ -10,7 +10,7 @@ from config.logger import logger
 log = logger(__name__, CFG.APP.FILE_HYPEMAN_LOG, "w", CFG.APP.DEBUG)
 
 
-class AirbossHypemanBot(discord.Client):
+class HypemanDiscordBot(discord.Client):
     def __init__(
         self, client_id: str, channel_id: int, announce: bool, announce_msg: str,
         server_info_data: str, greenieboard_img: str
@@ -24,7 +24,7 @@ class AirbossHypemanBot(discord.Client):
         self.server_info_data = server_info_data
         self.greenieboard_img = greenieboard_img
 
-        log.debug(f"Initialized AirbossHypemanBot")
+        log.debug(f"Initialized HypemanDiscordBot")
 
     # Called when the bot has connected to discord and is ready.
     async def on_ready(self):
@@ -100,13 +100,13 @@ class AirbossHypemanBot(discord.Client):
             log.info(f'Error - {e}')
 
 
-class HypeManListener:
-    def __init__(self, host: str, port: int, bot: AirbossHypemanBot):
+class HypemanDCSListener:
+    def __init__(self, host: str, port: int, bot: HypemanDiscordBot):
         self.bot = bot
         self._host = host
         self._port = port
 
-        log.debug("Initialized HypeManListener")
+        log.debug("Initialized HypemanDCSListener")
 
     async def start_listener(self):
         """Start listening for DCS messages"""
@@ -128,7 +128,7 @@ class HypeManListener:
 if __name__ == "__main__":
 
     # Create the BOT and Listener classes
-    hm_bot = AirbossHypemanBot(
+    hm_bot = HypemanDiscordBot(
         CFG_DISCORD.HYPEMAN.ID_CLIENT,
         CFG_DISCORD.HYPEMAN.ID_CHANNEL,
         CFG_DISCORD.HYPEMAN.BOT_ANNOUNCE,
@@ -136,7 +136,7 @@ if __name__ == "__main__":
         CFG.SERVERINFO.FILE_DATA,
         CFG.GREENIEBOARD.IMAGE_BOARDROOM_FINAL
     )
-    hm_listener = HypeManListener(
+    hm_listener = HypemanDCSListener(
         CFG.APP.HOST,
         CFG.APP.PORT,
         hm_bot
